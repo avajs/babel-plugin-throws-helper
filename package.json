@@ -24,6 +24,7 @@
   "dependencies": {},
   "devDependencies": {
     "ava": "^0.14.0",
+    "babel-core": "^6.7.5",
     "xo": "^0.13.0"
   }
 }
