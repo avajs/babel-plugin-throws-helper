@@ -37,7 +37,7 @@ const HELPER = [
 	'    return fn();',
 	'  } catch (e) {',
 	'    if (e) {',
-	'      e._avaTryCatchHelperData = data;',
+	'      e._avaThrowsHelperData = data;',
 	'    }',
 	'',
 	'    throw e;',
