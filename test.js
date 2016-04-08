@@ -69,7 +69,6 @@ test('creates a helper', t => {
 });
 
 test('creates the helper only once', t => {
-
 	const input = `t.throws(foo());\nt.throws(bar());`;
 	const code = transform(input).code;
 
