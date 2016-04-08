@@ -13,12 +13,12 @@ Genesis of the idea: https://github.com/sindresorhus/eslint-plugin-ava/issues/75
 > People don't realize they need to wrap their call in a function, so many end up doing `t.throws(foo())` instead of `t.throws(() => foo());`. It's an easy mistake to make.
 
 
-The difficulty is that `t.throws(foo())` is allowed if `foo()` returns a promise. There is no good way to differentiate between the two at runtime. So providing a good error message is going to take some AST transform magic.
+The difficulty is that `t.throws(foo())` is allowed if `foo()` returns a promise or a function. There is no good way to differentiate between the two at runtime. So providing a good error message is going to take some AST transform magic.
 
 ## The solution
 
 ```js
-  t.throws(foo());
+  t.throws(foo(a, b));
 ```
 
 becomes:
