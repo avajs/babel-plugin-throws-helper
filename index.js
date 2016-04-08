@@ -1,45 +1,44 @@
 'use strict';
+var t = require('babel-types');
+var template = require('babel-template');
 
-module.exports = function (babel) {
-	var template = babel.template;
-	var t = babel.types;
+var wrapWithHelper = template([
+	'HELPER_ID(function () {',
+	'  return EXP;',
+	'}, {',
+	'  line: LINE,',
+	'  column: COLUMN,',
+	'  source: SOURCE',
+	'});'
+].join('\n'));
 
-	var wrapWithHelper = template([
-		'HELPER_ID(function () {',
-		'  return EXP;',
-		'}, {',
-		'  line: LINE,',
-		'  column: COLUMN,',
-		'  source: SOURCE',
-		'});'
-	].join('\n'));
+var buildHelper = template([
+	'function HELPER_ID(fn, data) {',
+	'  try {',
+	'    return fn();',
+	'  } catch (e) {',
+	'    e._avaTryCatchHelperData = data;',
+	'    throw e;',
+	'  }',
+	'}'
+].join('\n'));
 
-	var buildHelper = template([
-		'function HELPER_ID(fn, data) {',
-		'  try {',
-		'    return fn();',
-		'  } catch (e) {',
-		'    e._avaTryCatchHelperData = data;',
-		'    throw e;',
-		'  }',
-		'}'
-	].join('\n'));
-
-	var assertionVisitor = {
-		CallExpression: function (path, state) {
-			if (isThrowsMember(path.get('callee'))) {
-				var arg0 = path.node.arguments[0];
-				path.node.arguments[0] = wrapWithHelper({
-					HELPER_ID: t.identifier(this.avaThrowHelper()),
-					EXP: arg0,
-					LINE: t.numericLiteral(arg0.loc.start.line),
-					COLUMN: t.numericLiteral(arg0.loc.start.column),
-					SOURCE: t.stringLiteral(state.file.code.substring(arg0.start, arg0.end))
-				}).expression;
-			}
+var assertionVisitor = {
+	CallExpression: function (path, state) {
+		if (isThrowsMember(path.get('callee'))) {
+			var arg0 = path.node.arguments[0];
+			path.node.arguments[0] = wrapWithHelper({
+				HELPER_ID: t.identifier(this.avaThrowHelper()),
+				EXP: arg0,
+				LINE: t.numericLiteral(arg0.loc.start.line),
+				COLUMN: t.numericLiteral(arg0.loc.start.column),
+				SOURCE: t.stringLiteral(state.file.code.substring(arg0.start, arg0.end))
+			}).expression;
 		}
-	};
+	}
+};
 
+module.exports = function () {
 	return {
 		visitor: {
 			Program: function (path, state) {
