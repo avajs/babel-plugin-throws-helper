@@ -17,7 +17,9 @@ var buildHelper = template([
 	'  try {',
 	'    return fn();',
 	'  } catch (e) {',
-	'    e._avaTryCatchHelperData = data;',
+	'    if (e) {',
+	'      e._avaTryCatchHelperData = data;',
+	'    }',
 	'    throw e;',
 	'  }',
 	'}'
