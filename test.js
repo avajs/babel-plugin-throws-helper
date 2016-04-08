@@ -10,9 +10,18 @@ function transform(input) {
 
 test('foo', t => {
 	const code = transform(`t.throws(foo())`).code;
-
+	
 	const expected = [
-		't.throws(throwsHelper(function () {',
+		'function _avaThrowsHelper(fn, data) {',
+		'  try {',
+		'    return fn();',
+		'  } catch (e) {',
+		'    e._avaTryCatchHelperData = data;',
+		'    throw e;',
+		'  }',
+		'}',
+		'',
+		't.throws(_avaThrowsHelper(function () {',
 		'  return foo();',
 		'}));'
 	].join('\n');
