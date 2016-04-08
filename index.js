@@ -64,5 +64,8 @@ module.exports = function (babel) {
 };
 
 function isThrowsMember(path) {
-	return path.isMemberExpression() && path.get('object').isIdentifier({name: 't'}) && path.get('property').isIdentifier({name: 'throws'});
+	return path.isMemberExpression() && path.get('object').isIdentifier({name: 't'}) && (
+			path.get('property').isIdentifier({name: 'throws'}) ||
+			path.get('property').isIdentifier({name: 'notThrows'})
+		);
 }
