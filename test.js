@@ -23,6 +23,10 @@ test('foo', t => {
 		'',
 		't.throws(_avaThrowsHelper(function () {',
 		'  return foo();',
+		'}, {',
+		'  line: 1,',
+		'  column: 9,',
+		'  source: "foo()"',
 		'}));'
 	].join('\n');
 

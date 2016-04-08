@@ -7,6 +7,10 @@ module.exports = function (babel) {
 	var wrapWithHelper = template([
 		'HELPER_ID(function () {',
 		'  return EXP;',
+		'}, {',
+		'  line: LINE,',
+		'  column: COLUMN,',
+		'  source: SOURCE',
 		'});'
 	].join('\n'));
 
@@ -22,12 +26,15 @@ module.exports = function (babel) {
 	].join('\n'));
 
 	var assertionVisitor = {
-		CallExpression: function (path) {
+		CallExpression: function (path, state) {
 			if (isThrowsMember(path.get('callee'))) {
 				var arg0 = path.node.arguments[0];
 				path.node.arguments[0] = wrapWithHelper({
 					HELPER_ID: t.identifier(this.avaThrowHelper()),
-					EXP: arg0
+					EXP: arg0,
+					LINE: t.numericLiteral(arg0.loc.start.line),
+					COLUMN: t.numericLiteral(arg0.loc.start.column),
+					SOURCE: t.stringLiteral(state.file.code.substring(arg0.start, arg0.end))
 				}).expression;
 			}
 		}
@@ -35,7 +42,7 @@ module.exports = function (babel) {
 
 	return {
 		visitor: {
-			Program: function (path) {
+			Program: function (path, state) {
 				var HELPER_ID = path.scope.generateUid('avaThrowsHelper');
 				var created = false;
 
@@ -48,7 +55,8 @@ module.exports = function (babel) {
 							}));
 						}
 						return HELPER_ID;
-					}
+					},
+					file: state.file
 				});
 			}
 		}
