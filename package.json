@@ -13,7 +13,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "test": "xo && ava"
+    "test": "xo && ava",
+    "preversion": "WRITE_EXAMPLES=1 npm run test && git add example-output.md"
   },
   "files": [
     "index.js"
