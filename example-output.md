@@ -30,7 +30,8 @@ t.throws(_avaThrowsHelper(function () {
 }, {
   line: 1,
   column: 9,
-  source: "foo()"
+  source: "foo()",
+  filename: "some-file.js"
 }));
 ```
 
@@ -69,14 +70,16 @@ t.throws(_avaThrowsHelper(function () {
 }, {
   line: 1,
   column: 9,
-  source: "foo()"
+  source: "foo()",
+  filename: "some-file.js"
 }));
 t.throws(_avaThrowsHelper(function () {
   return bar();
 }, {
   line: 2,
   column: 9,
-  source: "bar()"
+  source: "bar()",
+  filename: "some-file.js"
 }));
 ```
 
@@ -128,7 +131,8 @@ t.notThrows(_avaThrowsHelper(function () {
 }, {
   line: 1,
   column: 12,
-  source: "baz()"
+  source: "baz()",
+  filename: "some-file.js"
 }));
 ```
 

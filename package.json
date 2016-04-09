@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-ava-throws-helper",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "My cool module",
   "license": "MIT",
   "repository": "jamestalmage/babel-plugin-throws-helper",
