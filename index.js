@@ -8,7 +8,8 @@ var wrapWithHelper = template([
 	'}, {',
 	'  line: LINE,',
 	'  column: COLUMN,',
-	'  source: SOURCE',
+	'  source: SOURCE,',
+	'  filename: FILE',
 	'});'
 ].join('\n'));
 
@@ -39,7 +40,8 @@ var assertionVisitor = {
 				EXP: arg0,
 				LINE: t.numericLiteral(arg0.loc.start.line),
 				COLUMN: t.numericLiteral(arg0.loc.start.column),
-				SOURCE: t.stringLiteral(state.file.code.substring(arg0.start, arg0.end))
+				SOURCE: t.stringLiteral(state.file.code.substring(arg0.start, arg0.end)),
+				FILE: t.stringLiteral(state.file.opts.filename)
 			}).expression;
 		}
 	}

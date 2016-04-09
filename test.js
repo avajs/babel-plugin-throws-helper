@@ -6,7 +6,8 @@ import fn from './';
 
 function transform(input) {
 	return babel.transform(input, {
-		plugins: [fn]
+		plugins: [fn],
+		filename: 'some-file.js'
 	});
 }
 
@@ -59,7 +60,8 @@ function wrapped(throws, expression, line, column) {
 		'}, {',
 		`  line: ${line},`,
 		`  column: ${column},`,
-		`  source: "${expression}"`,
+		`  source: "${expression}",`,
+		`  filename: "some-file.js"`,
 		'}));'
 	].join('\n');
 }
