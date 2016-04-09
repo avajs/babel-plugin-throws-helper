@@ -11,7 +11,16 @@ function _avaThrowsHelper(fn, data) {
   try {
     return fn();
   } catch (e) {
-    e._avaTryCatchHelperData = data;
+    var type = typeof e;
+
+    if (e !== null && (type === "object" || type === "function")) {
+      try {
+        Object.defineProperty(e, "_avaThrowsHelperData", {
+          value: data
+        });
+      } catch (e) {}
+    }
+
     throw e;
   }
 }
@@ -41,7 +50,16 @@ function _avaThrowsHelper(fn, data) {
   try {
     return fn();
   } catch (e) {
-    e._avaTryCatchHelperData = data;
+    var type = typeof e;
+
+    if (e !== null && (type === "object" || type === "function")) {
+      try {
+        Object.defineProperty(e, "_avaThrowsHelperData", {
+          value: data
+        });
+      } catch (e) {}
+    }
+
     throw e;
   }
 }
@@ -91,7 +109,16 @@ function _avaThrowsHelper(fn, data) {
   try {
     return fn();
   } catch (e) {
-    e._avaTryCatchHelperData = data;
+    var type = typeof e;
+
+    if (e !== null && (type === "object" || type === "function")) {
+      try {
+        Object.defineProperty(e, "_avaThrowsHelperData", {
+          value: data
+        });
+      } catch (e) {}
+    }
+
     throw e;
   }
 }
