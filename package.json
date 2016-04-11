@@ -1,7 +1,7 @@
 {
   "name": "babel-plugin-ava-throws-helper",
   "version": "0.0.4",
-  "description": "My cool module",
+  "description": "Babel plugin for protecting against improper use of t.throws in AVA",
   "license": "MIT",
   "repository": "jamestalmage/babel-plugin-throws-helper",
   "author": {
@@ -20,7 +20,12 @@
     "index.js"
   ],
   "keywords": [
-    ""
+    "babel-plugin",
+    "babel",
+    "helper",
+    "ava",
+    "assertion",
+    "throws"
   ],
   "dependencies": {
     "babel-template": "^6.7.0",
@@ -29,6 +34,6 @@
   "devDependencies": {
     "ava": "^0.14.0",
     "babel-core": "^6.7.5",
-    "xo": "^0.13.0"
+    "xo": "^0.14.0"
   }
 }
