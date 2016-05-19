@@ -35,6 +35,7 @@ var assertionVisitor = {
 	CallExpression: function (path, state) {
 		if (isThrowsMember(path.get('callee'))) {
 			var arg0 = path.node.arguments[0];
+
 			path.node.arguments[0] = wrapWithHelper({
 				HELPER_ID: t.identifier(this.avaThrowHelper()),
 				EXP: arg0,
@@ -62,6 +63,7 @@ module.exports = function () {
 								HELPER_ID: t.identifier(HELPER_ID)
 							}));
 						}
+
 						return HELPER_ID;
 					},
 					file: state.file

@@ -1,6 +1,6 @@
-# babel-plugin-ava-throws-helper [![Build Status](https://travis-ci.org/jamestalmage/babel-plugin-ava-throws-helper.svg?branch=master)](https://travis-ci.org/jamestalmage/babel-plugin-ava-throws-helper)
+# babel-plugin-ava-throws-helper [![Build Status](https://travis-ci.org/avajs/babel-plugin-ava-throws-helper.svg?branch=master)](https://travis-ci.org/avajs/babel-plugin-ava-throws-helper)
 
-> Babel plugin for protecting against improper use of `t.throws` in [AVA](https://ava.li)
+> Babel plugin for protecting against improper use of `t.throws()` in [AVA](https://ava.li)
 
 Probably not useful except as an internal plugin for the AVA test runner.
 
@@ -14,6 +14,7 @@ Probably not useful except as an internal plugin for the AVA test runner.
 
 The difficulty is that `t.throws(foo())` is allowed if `foo()` returns a promise or a function. There is no good way to differentiate between the two at runtime. So providing a good error message is going to take some AST transform magic.
 
+
 ## Solution
 
 See [`example-output.md`](example-output.md) for the transformation this plugin performs.
@@ -26,6 +27,7 @@ $ WRITE_EXAMPLES=1 ava
 
 Contributors should not commit new examples. They will be regenerated as part of the release process.
 
+
 ## License
 
-MIT © [James Talmage](http://github.com/jamestalmage)
+MIT © [James Talmage](https://github.com/jamestalmage)

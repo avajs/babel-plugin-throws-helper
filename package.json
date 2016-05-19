@@ -1,9 +1,9 @@
 {
   "name": "babel-plugin-ava-throws-helper",
   "version": "0.0.4",
-  "description": "Babel plugin for protecting against improper use of t.throws in AVA",
+  "description": "Babel plugin for protecting against improper use of `t.throws()` in AVA",
   "license": "MIT",
-  "repository": "jamestalmage/babel-plugin-throws-helper",
+  "repository": "avajs/babel-plugin-throws-helper",
   "author": {
     "name": "James Talmage",
     "email": "james@talmage.io",
@@ -34,6 +34,6 @@
   "devDependencies": {
     "ava": "^0.14.0",
     "babel-core": "^6.7.5",
-    "xo": "^0.14.0"
+    "xo": "^0.15.1"
   }
 }
