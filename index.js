@@ -36,6 +36,10 @@ var assertionVisitor = {
 		if (isThrowsMember(path.get('callee'))) {
 			var arg0 = path.node.arguments[0];
 
+			if (!(arg0 && arg0.loc && (typeof arg0.start === 'number') && (typeof arg0.end === 'number'))) {
+				return;
+			}
+
 			path.node.arguments[0] = wrapWithHelper({
 				HELPER_ID: t.identifier(this.avaThrowHelper()),
 				EXP: arg0,
