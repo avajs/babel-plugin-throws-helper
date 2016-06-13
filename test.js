@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import {serial as test} from 'ava';
 import * as babel from 'babel-core';
+import * as types from 'babel-types';
 import fn from './';
 
 function transform(input) {
@@ -112,6 +113,26 @@ test('helps notThrows', t => {
 
 	t.is(code, expected);
 	addExample(input, code);
+});
+
+test('does not throw on generated code', () => {
+	var statement = types.expressionStatement(types.callExpression(
+		types.memberExpression(
+			types.identifier('t'),
+			types.identifier('throws')
+		),
+		[types.callExpression(
+			types.identifier('foo'),
+			[]
+		)]
+	));
+
+	var program = types.program([statement]);
+
+	babel.transformFromAst(program, null, {
+		plugins: [fn],
+		filename: 'some-file.js'
+	});
 });
 
 if (process.env.WRITE_EXAMPLES) {
