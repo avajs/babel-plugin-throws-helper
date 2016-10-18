@@ -33,42 +33,37 @@ function addExample(input, output) {
 	);
 }
 
-const HELPER = [
-	'function _avaThrowsHelper(fn, data) {',
-	'  try {',
-	'    return fn();',
-	'  } catch (e) {',
-	'    var type = typeof e;',
-	'',
-	'    if (e !== null && (type === "object" || type === "function")) {',
-	'      try {',
-	'        Object.defineProperty(e, "_avaThrowsHelperData", {',
-	'          value: data',
-	'        });',
-	'      } catch (e) {}',
-	'    }',
-	'',
-	'    throw e;',
-	'  }',
-	'}',
-	''
-].join('\n');
+const HELPER = `function _avaThrowsHelper(fn, data) {
+  try {
+    return fn();
+  } catch (e) {
+    var type = typeof e;
+
+    if (e !== null && (type === "object" || type === "function")) {
+      try {
+        Object.defineProperty(e, "_avaThrowsHelperData", {
+          value: data
+        });
+      } catch (e) {}
+    }
+
+    throw e;
+  }
+}\n`;
 
 function wrapped(throws, expression, line, column) {
-	return [
-		`t.${throws}(_avaThrowsHelper(function () {`,
-		`  return ${expression};`,
-		'}, {',
-		`  line: ${line},`,
-		`  column: ${column},`,
-		`  source: "${expression}",`,
-		`  filename: "some-file.js"`,
-		'}));'
-	].join('\n');
+	return `t.${throws}(_avaThrowsHelper(function () {
+  return ${expression};
+}, {
+  line: ${line},
+  column: ${column},
+  source: "${expression}",
+  filename: "some-file.js"
+}));`;
 }
 
 test('creates a helper', t => {
-	const input = `t.throws(foo())`;
+	const input = 't.throws(foo())';
 	const code = transform(input).code;
 
 	const expected = [
@@ -81,7 +76,7 @@ test('creates a helper', t => {
 });
 
 test('creates the helper only once', t => {
-	const input = `t.throws(foo());\nt.throws(bar());`;
+	const input = 't.throws(foo());\nt.throws(bar());';
 	const code = transform(input).code;
 
 	const expected = [
@@ -103,7 +98,7 @@ test('does nothing if it does not match', t => {
 });
 
 test('helps notThrows', t => {
-	const input = `t.notThrows(baz())`;
+	const input = 't.notThrows(baz())';
 	const code = transform(input).code;
 
 	const expected = [
