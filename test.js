@@ -64,7 +64,7 @@ function wrapped(throws, expression, line, column) {
 
 test('creates a helper', t => {
 	const input = 't.throws(foo())';
-	const code = transform(input).code;
+	const {code} = transform(input);
 
 	const expected = [
 		HELPER,
@@ -77,7 +77,7 @@ test('creates a helper', t => {
 
 test('creates the helper only once', t => {
 	const input = 't.throws(foo());\nt.throws(bar());';
-	const code = transform(input).code;
+	const {code} = transform(input);
 
 	const expected = [
 		HELPER,
@@ -91,7 +91,7 @@ test('creates the helper only once', t => {
 
 test('does nothing if it does not match', t => {
 	const input = 't.is(foo());';
-	const code = transform(input).code;
+	const {code} = transform(input);
 
 	t.is(code, input);
 	addExample(input, code);
@@ -99,7 +99,7 @@ test('does nothing if it does not match', t => {
 
 test('helps notThrows', t => {
 	const input = 't.notThrows(baz())';
-	const code = transform(input).code;
+	const {code} = transform(input);
 
 	const expected = [
 		HELPER,
