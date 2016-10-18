@@ -31,6 +31,8 @@ var buildHelper = template([
 	'}'
 ].join('\n'));
 
+var hoistExpression = template('var ARG = EXP;');
+
 var assertionVisitor = {
 	CallExpression: function (path, state) {
 		if (isThrowsMember(path.get('callee'))) {
@@ -40,14 +42,24 @@ var assertionVisitor = {
 				return;
 			}
 
+			var hoisted = hoistAwaitAndYield(path, arg0);
+
 			path.node.arguments[0] = wrapWithHelper({
 				HELPER_ID: t.identifier(this.avaThrowHelper()),
-				EXP: arg0,
+				EXP: hoisted ? hoisted.arg0 : arg0,
 				LINE: t.numericLiteral(arg0.loc.start.line),
 				COLUMN: t.numericLiteral(arg0.loc.start.column),
 				SOURCE: t.stringLiteral(state.file.code.substring(arg0.start, arg0.end)),
 				FILE: t.stringLiteral(state.file.opts.filename)
 			}).expression;
+
+			if (hoisted) {
+				path.replaceWithMultiple(
+					hoisted.expressions.concat(
+						t.expressionStatement(path.node)
+					)
+				);
+			}
 		}
 	}
 };
@@ -82,4 +94,33 @@ function isThrowsMember(path) {
 			path.get('property').isIdentifier({name: 'throws'}) ||
 			path.get('property').isIdentifier({name: 'notThrows'})
 		);
+}
+
+function hoistAwaitAndYield(path, arg0) {
+	if (t.isAwaitExpression(arg0) || t.isYieldExpression(arg0)) {
+		var arg = path.scope.generateUidIdentifier('arg');
+		return {
+			expressions: [hoistExpression({ARG: arg, EXP: arg0})],
+			arg0: arg
+		};
+	}
+
+	if (t.isCallExpression(arg0)) {
+		var expressions = [];
+		arg0.arguments = arg0.arguments.map(function (arg) {
+			var hoisted = hoistAwaitAndYield(path, arg);
+			if (!hoisted) {
+				return arg;
+			}
+
+			expressions = expressions.concat(hoisted.expressions);
+			return hoisted.arg0;
+		});
+		return {
+			expressions: expressions,
+			arg0: arg0
+		};
+	}
+
+	return null;
 }
