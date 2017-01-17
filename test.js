@@ -51,15 +51,19 @@ const HELPER = `function _avaThrowsHelper(fn, data) {
   }
 }\n`;
 
-function wrapped(throws, expression, line, column) {
+function wrapped(throws, line, column, expression, source = expression) { // eslint-disable-line max-params
 	return `t.${throws}(_avaThrowsHelper(function () {
   return ${expression};
 }, {
   line: ${line},
   column: ${column},
-  source: "${expression}",
+  source: "${source}",
   filename: "some-file.js"
 }));`;
+}
+
+function indent(str) {
+	return str.replace(/\n/g, '\n  ').trimRight();
 }
 
 test('creates a helper', t => {
@@ -68,7 +72,7 @@ test('creates a helper', t => {
 
 	const expected = [
 		HELPER,
-		wrapped('throws', 'foo()', 1, 9)
+		wrapped('throws', 1, 9, 'foo()')
 	].join('\n');
 
 	t.is(code, expected);
@@ -81,9 +85,57 @@ test('creates the helper only once', t => {
 
 	const expected = [
 		HELPER,
-		wrapped('throws', 'foo()', 1, 9),
-		wrapped('throws', 'bar()', 2, 9)
+		wrapped('throws', 1, 9, 'foo()'),
+		wrapped('throws', 2, 9, 'bar()')
 	].join('\n');
+
+	t.is(code, expected);
+	addExample(input, code);
+});
+
+test('hoists await expressions', t => {
+	const input = `async function test() {
+  t.throws(foo(await bar(), await baz(), qux));
+  t.throws(await quux);
+}`;
+	const {code} = transform(input);
+
+	const expected = `${HELPER}
+async function test() {
+  var _arg = await bar();
+
+  var _arg2 = await baz();
+
+  ${indent(wrapped('throws', 2, 11, 'foo(_arg, _arg2, qux)', 'foo(await bar(), await baz(), qux)'))}
+
+  var _arg3 = await quux;
+
+  ${indent(wrapped('throws', 3, 11, '_arg3', 'await quux'))}
+}`;
+
+	t.is(code, expected);
+	addExample(input, code);
+});
+
+test('hoists yield expressions', t => {
+	const input = `function* test() {
+  t.throws(foo(yield bar(), yield baz(), qux));
+  t.throws(yield quux);
+}`;
+	const {code} = transform(input);
+
+	const expected = `${HELPER}
+function* test() {
+  var _arg = yield bar();
+
+  var _arg2 = yield baz();
+
+  ${indent(wrapped('throws', 2, 11, 'foo(_arg, _arg2, qux)', 'foo(yield bar(), yield baz(), qux)'))}
+
+  var _arg3 = yield quux;
+
+  ${indent(wrapped('throws', 3, 11, '_arg3', 'yield quux'))}
+}`;
 
 	t.is(code, expected);
 	addExample(input, code);
@@ -103,7 +155,7 @@ test('helps notThrows', t => {
 
 	const expected = [
 		HELPER,
-		wrapped('notThrows', 'baz()', 1, 12)
+		wrapped('notThrows', 1, 12, 'baz()')
 	].join('\n');
 
 	t.is(code, expected);
