@@ -7,32 +7,21 @@ t.throws(foo())
 becomes:
 
 ```js
-function _avaThrowsHelper(fn, data) {
-  try {
-    return fn();
-  } catch (e) {
-    var type = typeof e;
-
-    if (e !== null && (type === "object" || type === "function")) {
-      try {
-        Object.defineProperty(e, "_avaThrowsHelperData", {
-          value: data
-        });
-      } catch (e) {}
-    }
-
-    throw e;
+function _avaThrowsHelperStart(t, assertion, file, line) {
+  if (t._throwsArgStart) {
+    t._throwsArgStart(assertion, file, line);
   }
 }
 
-t.throws(_avaThrowsHelper(function () {
-  return foo();
-}, {
-  line: 1,
-  column: 9,
-  source: "foo()",
-  filename: "some-file.js"
-}));
+function _avaThrowsHelperEnd(t, arg) {
+  if (t._throwsArgEnd) {
+    t._throwsArgEnd();
+  }
+
+  return arg;
+}
+
+t.throws((_avaThrowsHelperStart(t, "throws", "some-file.js", 1), _avaThrowsHelperEnd(t, foo())));
 ```
 
 ---
@@ -47,40 +36,22 @@ t.throws(bar());
 becomes:
 
 ```js
-function _avaThrowsHelper(fn, data) {
-  try {
-    return fn();
-  } catch (e) {
-    var type = typeof e;
-
-    if (e !== null && (type === "object" || type === "function")) {
-      try {
-        Object.defineProperty(e, "_avaThrowsHelperData", {
-          value: data
-        });
-      } catch (e) {}
-    }
-
-    throw e;
+function _avaThrowsHelperStart(t, assertion, file, line) {
+  if (t._throwsArgStart) {
+    t._throwsArgStart(assertion, file, line);
   }
 }
 
-t.throws(_avaThrowsHelper(function () {
-  return foo();
-}, {
-  line: 1,
-  column: 9,
-  source: "foo()",
-  filename: "some-file.js"
-}));
-t.throws(_avaThrowsHelper(function () {
-  return bar();
-}, {
-  line: 2,
-  column: 9,
-  source: "bar()",
-  filename: "some-file.js"
-}));
+function _avaThrowsHelperEnd(t, arg) {
+  if (t._throwsArgEnd) {
+    t._throwsArgEnd();
+  }
+
+  return arg;
+}
+
+t.throws((_avaThrowsHelperStart(t, "throws", "some-file.js", 1), _avaThrowsHelperEnd(t, foo())));
+t.throws((_avaThrowsHelperStart(t, "throws", "some-file.js", 2), _avaThrowsHelperEnd(t, bar())));
 ```
 
 ---
@@ -108,32 +79,21 @@ t.notThrows(baz())
 becomes:
 
 ```js
-function _avaThrowsHelper(fn, data) {
-  try {
-    return fn();
-  } catch (e) {
-    var type = typeof e;
-
-    if (e !== null && (type === "object" || type === "function")) {
-      try {
-        Object.defineProperty(e, "_avaThrowsHelperData", {
-          value: data
-        });
-      } catch (e) {}
-    }
-
-    throw e;
+function _avaThrowsHelperStart(t, assertion, file, line) {
+  if (t._throwsArgStart) {
+    t._throwsArgStart(assertion, file, line);
   }
 }
 
-t.notThrows(_avaThrowsHelper(function () {
-  return baz();
-}, {
-  line: 1,
-  column: 12,
-  source: "baz()",
-  filename: "some-file.js"
-}));
+function _avaThrowsHelperEnd(t, arg) {
+  if (t._throwsArgEnd) {
+    t._throwsArgEnd();
+  }
+
+  return arg;
+}
+
+t.notThrows((_avaThrowsHelperStart(t, "notThrows", "some-file.js", 1), _avaThrowsHelperEnd(t, baz())));
 ```
 
 ---
