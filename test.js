@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import {serial as test} from 'ava';
 import * as babel from 'babel-core';
-import * as types from 'babel-types';
 import fn from './';
 
 function transform(input) {
@@ -12,7 +11,7 @@ function transform(input) {
 	});
 }
 
-var examples = [];
+const examples = [];
 
 function addExample(input, output) {
 	examples.push(
@@ -33,45 +32,29 @@ function addExample(input, output) {
 	);
 }
 
-const HELPER = `function _avaThrowsHelper(fn, data) {
-  try {
-    return fn();
-  } catch (e) {
-    var type = typeof e;
-
-    if (e !== null && (type === "object" || type === "function")) {
-      try {
-        Object.defineProperty(e, "_avaThrowsHelperData", {
-          value: data
-        });
-      } catch (e) {}
-    }
-
-    throw e;
+const HELPERS = `function _avaThrowsHelperStart(t, assertion, file, line) {
+  if (t._throwsArgStart) {
+    t._throwsArgStart(assertion, file, line);
   }
-}\n`;
+}
 
-function wrapped(throws, expression, line, column) {
-	return `t.${throws}(_avaThrowsHelper(function () {
-  return ${expression};
-}, {
-  line: ${line},
-  column: ${column},
-  source: "${expression}",
-  filename: "some-file.js"
-}));`;
+function _avaThrowsHelperEnd(t, arg) {
+  if (t._throwsArgEnd) {
+    t._throwsArgEnd();
+  }
+
+  return arg;
+}\n\n`;
+
+function wrapped(throws, expression, line) {
+	return `t.${throws}((_avaThrowsHelperStart(t, "${throws}", "some-file.js", ${line}), _avaThrowsHelperEnd(t, ${expression})));`;
 }
 
 test('creates a helper', t => {
 	const input = 't.throws(foo())';
 	const {code} = transform(input);
 
-	const expected = [
-		HELPER,
-		wrapped('throws', 'foo()', 1, 9)
-	].join('\n');
-
-	t.is(code, expected);
+	t.is(code, HELPERS + wrapped('throws', 'foo()', 1));
 	addExample(input, code);
 });
 
@@ -79,13 +62,7 @@ test('creates the helper only once', t => {
 	const input = 't.throws(foo());\nt.throws(bar());';
 	const {code} = transform(input);
 
-	const expected = [
-		HELPER,
-		wrapped('throws', 'foo()', 1, 9),
-		wrapped('throws', 'bar()', 2, 9)
-	].join('\n');
-
-	t.is(code, expected);
+	t.is(code, HELPERS + wrapped('throws', 'foo()', 1) + '\n' + wrapped('throws', 'bar()', 2));
 	addExample(input, code);
 });
 
@@ -101,28 +78,23 @@ test('helps notThrows', t => {
 	const input = 't.notThrows(baz())';
 	const {code} = transform(input);
 
-	const expected = [
-		HELPER,
-		wrapped('notThrows', 'baz()', 1, 12)
-	].join('\n');
-
-	t.is(code, expected);
+	t.is(code, HELPERS + wrapped('notThrows', 'baz()', 1));
 	addExample(input, code);
 });
 
 test('does not throw on generated code', () => {
-	var statement = types.expressionStatement(types.callExpression(
-		types.memberExpression(
-			types.identifier('t'),
-			types.identifier('throws')
+	const statement = babel.types.expressionStatement(babel.types.callExpression(
+		babel.types.memberExpression(
+			babel.types.identifier('t'),
+			babel.types.identifier('throws')
 		),
-		[types.callExpression(
-			types.identifier('foo'),
+		[babel.types.callExpression(
+			babel.types.identifier('foo'),
 			[]
 		)]
 	));
 
-	var program = types.program([statement]);
+	const program = babel.types.program([statement]);
 
 	babel.transformFromAst(program, null, {
 		plugins: [fn],

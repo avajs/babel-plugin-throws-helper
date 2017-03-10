@@ -27,10 +27,6 @@
     "assertion",
     "throws"
   ],
-  "dependencies": {
-    "babel-template": "^6.7.0",
-    "babel-types": "^6.7.2"
-  },
   "devDependencies": {
     "ava": "^0.18.2",
     "babel-core": "^6.7.5",
