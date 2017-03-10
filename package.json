@@ -32,7 +32,7 @@
     "babel-types": "^6.7.2"
   },
   "devDependencies": {
-    "ava": "^0.17.0",
+    "ava": "^0.18.2",
     "babel-core": "^6.7.5",
     "xo": "^0.17.0"
   }
