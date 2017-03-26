@@ -1,4 +1,4 @@
-# babel-plugin-ava-throws-helper [![Build Status](https://travis-ci.org/avajs/babel-plugin-ava-throws-helper.svg?branch=master)](https://travis-ci.org/avajs/babel-plugin-ava-throws-helper)
+# babel-plugin-throws-helper [![Build Status](https://travis-ci.org/avajs/babel-plugin-throws-helper.svg?branch=master)](https://travis-ci.org/avajs/babel-plugin-throws-helper)
 
 > Babel plugin for protecting against improper use of `t.throws()` in [AVA](https://ava.li)
 
