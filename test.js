@@ -82,31 +82,34 @@ test('helps notThrows', t => {
 	addExample(input, code);
 });
 
-test('does not throw on generated code', () => {
-	const statement = babel.types.expressionStatement(babel.types.callExpression(
-		babel.types.memberExpression(
-			babel.types.identifier('t'),
-			babel.types.identifier('throws')
-		),
-		[babel.types.callExpression(
-			babel.types.identifier('foo'),
-			[]
-		)]
-	));
+test('does not throw on generated code', t => {
+	t.notThrows(() => {
+		const statement = babel.types.expressionStatement(babel.types.callExpression(
+			babel.types.memberExpression(
+				babel.types.identifier('t'),
+				babel.types.identifier('throws')
+			),
+			[babel.types.callExpression(
+				babel.types.identifier('foo'),
+				[]
+			)]
+		));
 
-	const program = babel.types.program([statement]);
+		const program = babel.types.program([statement]);
 
-	babel.transformFromAst(program, null, {
-		plugins: [fn],
-		filename: 'some-file.js'
+		babel.transformFromAst(program, null, {
+			plugins: [fn],
+			filename: 'some-file.js'
+		});
 	});
 });
 
 if (process.env.WRITE_EXAMPLES) {
-	test('writing examples', () => {
+	test('writing examples', t => {
 		fs.writeFileSync(
 			path.join(__dirname, 'example-output.md'),
 			examples.join('\n')
 		);
+		t.pass();
 	});
 }

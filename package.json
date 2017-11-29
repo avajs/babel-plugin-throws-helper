@@ -28,7 +28,7 @@
     "throws"
   ],
   "devDependencies": {
-    "ava": "^0.18.2",
+    "ava": "^0.25.0",
     "babel-core": "^6.7.5",
     "xo": "^0.18.2"
   }
