@@ -32,3 +32,4 @@ install: |
       exit 1;
     fi
   fi
+after_success: npx codecov --file=coverage/lcov.info
