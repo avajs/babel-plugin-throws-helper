@@ -1,6 +1,4 @@
-import path from 'path';
-import fs from 'fs';
-import {serial as test} from 'ava';
+import test from 'ava';
 import * as babel from '@babel/core';
 import fn from './';
 
@@ -11,76 +9,18 @@ function transform(input) {
 	});
 }
 
-const examples = [];
-
-function addExample(input, output) {
-	examples.push(
-		'input:',
-		'',
-		'```js',
-		input,
-		'```',
-		'',
-		'becomes:',
-		'',
-		'```js',
-		output,
-		'```',
-		'',
-		'---',
-		''
-	);
+function snapshotTransform(t, input) {
+	const {code} = transform(input);
+	t.snapshot(code, input);
 }
 
-const HELPERS = `function _avaThrowsHelperStart(t, assertion, file, line) {
-  if (t._throwsArgStart) {
-    t._throwsArgStart(assertion, file, line);
-  }
-}
+test('creates a helper', snapshotTransform, 't.throws(foo())');
 
-function _avaThrowsHelperEnd(t, arg) {
-  if (t._throwsArgEnd) {
-    t._throwsArgEnd();
-  }
+test('creates the helper only once', snapshotTransform, 't.throws(foo()); t.throws(bar());');
 
-  return arg;
-}\n\n`;
+test('does nothing if it does not match', snapshotTransform, 't.is(foo());');
 
-function wrapped(throws, expression, line) {
-	return `t.${throws}((_avaThrowsHelperStart(t, "${throws}", "some-file.js", ${line}), _avaThrowsHelperEnd(t, ${expression})));`;
-}
-
-test('creates a helper', t => {
-	const input = 't.throws(foo())';
-	const {code} = transform(input);
-
-	t.is(code, HELPERS + wrapped('throws', 'foo()', 1));
-	addExample(input, code);
-});
-
-test('creates the helper only once', t => {
-	const input = 't.throws(foo());\nt.throws(bar());';
-	const {code} = transform(input);
-
-	t.is(code, HELPERS + wrapped('throws', 'foo()', 1) + '\n' + wrapped('throws', 'bar()', 2));
-	addExample(input, code);
-});
-
-test('does nothing if it does not match', t => {
-	const input = 't.is(foo());';
-	const {code} = transform(input);
-
-	t.is(code, input);
-	addExample(input, code);
-});
-
-test('helps notThrows', t => {
-	const input = 't.notThrows(baz())';
-	const {code} = transform(input);
-
-	t.is(code, HELPERS + wrapped('notThrows', 'baz()', 1));
-	addExample(input, code);
-});
+test('helps notThrows', snapshotTransform, 't.notThrows(baz())');
 
 test('does not throw on generated code', t => {
 	t.notThrows(() => {
@@ -103,13 +43,3 @@ test('does not throw on generated code', t => {
 		});
 	});
 });
-
-if (process.env.WRITE_EXAMPLES) {
-	test('writing examples', t => {
-		fs.writeFileSync(
-			path.join(__dirname, 'example-output.md'),
-			examples.join('\n')
-		);
-		t.pass();
-	});
-}
