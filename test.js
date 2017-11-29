@@ -1,7 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import {serial as test} from 'ava';
-import * as babel from 'babel-core';
+import * as babel from '@babel/core';
 import fn from './';
 
 function transform(input) {
