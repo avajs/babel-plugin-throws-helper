@@ -13,8 +13,7 @@
     "node": ">=4"
   },
   "scripts": {
-    "test": "xo && nyc ava",
-    "preversion": "WRITE_EXAMPLES=1 npm run test && git add example-output.md"
+    "test": "xo && nyc ava"
   },
   "files": [
     "index.js"
