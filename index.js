@@ -29,7 +29,7 @@ function END(t, arg) {
 				return;
 			}
 
-			const arg0 = path.node.arguments[0];
+			const [arg0] = path.node.arguments;
 			if (!(arg0 && arg0.loc && (typeof arg0.start === 'number') && (typeof arg0.end === 'number'))) {
 				return;
 			}
