@@ -1,6 +1,6 @@
 import test from 'ava';
 import * as babel from '@babel/core';
-import fn from './';
+import fn from '.';
 
 function transform(input) {
 	return babel.transform(input, {
