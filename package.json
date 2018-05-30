@@ -1,6 +1,6 @@
 {
   "name": "@ava/babel-plugin-throws-helper",
-  "version": "3.0.0-beta.5",
+  "version": "3.0.0-beta.6",
   "description": "Babel plugin for protecting against improper use of `t.throws()` in AVA",
   "license": "MIT",
   "repository": "avajs/babel-plugin-throws-helper",
