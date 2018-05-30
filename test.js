@@ -5,7 +5,7 @@ import fn from '.';
 function transform(input) {
 	return babel.transform(input, {
 		plugins: [fn],
-		filename: 'some-file.js'
+		filename: '/some-file.js'
 	});
 }
 

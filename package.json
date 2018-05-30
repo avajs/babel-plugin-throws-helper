@@ -27,7 +27,7 @@
     "throws"
   ],
   "devDependencies": {
-    "@babel/core": "7.0.0-beta.48",
+    "@babel/core": "7.0.0-beta.49",
     "ava": "^0.25.0",
     "codecov": "^3.0.2",
     "nyc": "^11.8.0",
