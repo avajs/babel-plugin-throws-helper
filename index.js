@@ -36,12 +36,13 @@ function END(t, arg) {
 
 			// Wrap the argument expression, so that the stack trace of the assertion
 			// isn't affected.
-			path.node.arguments[0] = wrapArg(Object.assign({
+			path.node.arguments[0] = wrapArg({
 				ARG: arg0,
 				ASSERTION: t.stringLiteral(assertion),
 				FILE: t.stringLiteral(state.file.opts.filename),
-				LINE: t.numericLiteral(arg0.loc.start.line)
-			}, this.installHelper())).expression;
+				LINE: t.numericLiteral(arg0.loc.start.line),
+				...this.installHelper()
+			}).expression;
 		}
 	};
 
